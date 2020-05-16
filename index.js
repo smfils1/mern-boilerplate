@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.post("/api/users", async (req, res) => {
+app.post("/api/users/signup", async (req, res) => {
   const userInfo = req.body;
   const user = new User(userInfo);
   try {
@@ -39,6 +39,20 @@ app.post("/api/users", async (req, res) => {
       });
     }
     res.status(500).json({
+      err,
+    });
+  }
+});
+
+app.post("/api/users/login", async (req, res) => {
+  const loginInfo = req.body;
+  try {
+    const user = await User.validate(loginInfo.email, loginInfo.password);
+    res.status(200).json({
+      user,
+    });
+  } catch (err) {
+    res.status(400).json({
       err,
     });
   }

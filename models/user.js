@@ -31,6 +31,7 @@ const userSchema = mongoose.Schema({
 });
 
 const saltRounds = 10;
+
 userSchema.pre("save", function (next) {
   const user = this;
   if (user.isModified("password")) {
@@ -46,6 +47,55 @@ userSchema.pre("save", function (next) {
     next();
   }
 });
+
+// userSchema.methods.comparePassword = function (plainPassword, callback) {
+//   const user = this;
+//   bcrypt.compare(plainPassword, user.password, (err, isMatch) => {
+//     if (err) return callback(err);
+//     callback(null, isMatch);
+//   });
+// };
+
+// userSchema.methods.comparePassword = function (plainPassword) {
+//   const user = this;
+//   return bcrypt.compare(plainPassword, user.password, (err, isMatch) => {
+//     return new Promise((resolve, reject) => {
+//       if (err) reject(new Error("Invalid Login"));
+//       resolve(isMatch);
+//     });
+//   });
+// };
+
+userSchema.methods.comparePassword = function (plainPassword) {
+  const user = this;
+  return bcrypt.comdpare(plainPassword, user.password);
+};
+
+userSchema.statics.validate = async function (email, password) {
+  try {
+    const user = await User.findOne({ email });
+    if (!user) throw "Invalid Login";
+    const isPasswordMatch = await user.comparePassword(password);
+    if (isPasswordMatch) {
+      return user;
+    } else {
+      throw "Invalid Login";
+    }
+  } catch (err) {
+    throw err;
+  }
+
+  // return bcrypt
+  //   .compare(plainPassword, user.password)
+  //   .then((isMatch) => {
+  //     return new Promise((resolve) => {
+  //       resolve(isMatch);
+  //     });
+  //   })
+  //   .catch((err) => {
+  //     throw err;
+  //   });
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
