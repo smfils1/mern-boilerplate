@@ -48,8 +48,9 @@ app.post("/api/users/login", async (req, res) => {
   const loginInfo = req.body;
   try {
     const user = await User.validate(loginInfo.email, loginInfo.password);
-    res.status(200).json({
-      user,
+    const signedUser = await user.generateJWT();
+    res.cookie("jwt_auth", signedUser.token).status(200).json({
+      signedUser,
     });
   } catch (err) {
     res.status(400).json({

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema({
   name: {
@@ -48,27 +49,21 @@ userSchema.pre("save", function (next) {
   }
 });
 
-// userSchema.methods.comparePassword = function (plainPassword, callback) {
-//   const user = this;
-//   bcrypt.compare(plainPassword, user.password, (err, isMatch) => {
-//     if (err) return callback(err);
-//     callback(null, isMatch);
-//   });
-// };
-
-// userSchema.methods.comparePassword = function (plainPassword) {
-//   const user = this;
-//   return bcrypt.compare(plainPassword, user.password, (err, isMatch) => {
-//     return new Promise((resolve, reject) => {
-//       if (err) reject(new Error("Invalid Login"));
-//       resolve(isMatch);
-//     });
-//   });
-// };
-
 userSchema.methods.comparePassword = function (plainPassword) {
   const user = this;
-  return bcrypt.comdpare(plainPassword, user.password);
+  return bcrypt.compare(plainPassword, user.password);
+};
+
+userSchema.methods.generateJWT = async function () {
+  const user = this;
+  const token = jwt.sign(user._id.toHexString(), "secret");
+  user.token = token;
+  try {
+    const savedUser = await user.save();
+    return savedUser;
+  } catch (err) {
+    throw err;
+  }
 };
 
 userSchema.statics.validate = async function (email, password) {
@@ -84,17 +79,6 @@ userSchema.statics.validate = async function (email, password) {
   } catch (err) {
     throw err;
   }
-
-  // return bcrypt
-  //   .compare(plainPassword, user.password)
-  //   .then((isMatch) => {
-  //     return new Promise((resolve) => {
-  //       resolve(isMatch);
-  //     });
-  //   })
-  //   .catch((err) => {
-  //     throw err;
-  //   });
 };
 
 const User = mongoose.model("User", userSchema);
