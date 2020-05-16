@@ -2,21 +2,46 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
+const User = require("./models/user");
 const PORT = process.env.PORT;
-
-app.use(cors());
 
 mongoose
   .connect(process.env.DB_CONNECTION, {
     useNewUrlParser: true,
   })
   .then(() => console.log("DB is connected"))
-  .catch((error) => console.error(error));
+  .catch((err) => console.error(err));
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello World");
+});
+
+app.post("/api/users", async (req, res) => {
+  const userInfo = req.body;
+  const user = new User(userInfo);
+  try {
+    const createdUser = await user.save();
+
+    res.status(200).json(createdUser);
+  } catch (err) {
+    if (err.name === "ValidationError") {
+      res.status(400).json({
+        err,
+      });
+    }
+    res.status(500).json({
+      err,
+    });
+  }
 });
 
 app.listen(PORT, () => {
