@@ -23,15 +23,16 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  token: {
-    type: String,
-  },
-  tokenExp: {
-    type: Number,
-  },
+  // token: {
+  //   type: String,
+  // },
+  // tokenExp: {
+  //   type: Number,
+  // },
 });
 
 const saltRounds = 10;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 userSchema.pre("save", function (next) {
   const user = this;
@@ -56,7 +57,7 @@ userSchema.methods.comparePassword = function (plainPassword) {
 
 userSchema.methods.generateJWT = async function () {
   const user = this;
-  const token = jwt.sign(user._id.toHexString(), "secret");
+  const token = jwt.sign(user._id.toHexString(), JWT_SECRET);
   user.token = token;
   try {
     const savedUser = await user.save();
@@ -66,7 +67,17 @@ userSchema.methods.generateJWT = async function () {
   }
 };
 
-userSchema.statics.validate = async function (email, password) {
+userSchema.statics.verifyJWT = (token) => {
+  try {
+    if (!token) throw "Invalid Login";
+    const userId = jwt.verify(token, JWT_SECRET);
+    return userId;
+  } catch (err) {
+    throw err;
+  }
+};
+
+userSchema.statics.validate = async (email, password) => {
   try {
     const user = await User.findOne({ email });
     if (!user) throw "Invalid Login";

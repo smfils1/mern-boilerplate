@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const User = require("./models/user");
+const auth = require("./middleware/auth");
 const PORT = process.env.PORT;
 
 mongoose
@@ -21,8 +22,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
+app.get("/api/user", auth, (req, res) => {
+  res.json({ id: req.userId });
 });
 
 app.post("/api/users/signup", async (req, res) => {
@@ -30,7 +31,6 @@ app.post("/api/users/signup", async (req, res) => {
   const user = new User(userInfo);
   try {
     const createdUser = await user.save();
-
     res.status(200).json(createdUser);
   } catch (err) {
     if (err.name === "ValidationError") {
@@ -47,7 +47,10 @@ app.post("/api/users/signup", async (req, res) => {
 app.post("/api/users/login", async (req, res) => {
   const loginInfo = req.body;
   try {
+    //Validate credentials
     const user = await User.validate(loginInfo.email, loginInfo.password);
+
+    // Send credential cookie
     const signedUser = await user.generateJWT();
     res.cookie("jwt_auth", signedUser.token).status(200).json({
       signedUser,
