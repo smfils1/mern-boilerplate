@@ -57,7 +57,9 @@ userSchema.methods.comparePassword = function (plainPassword) {
 
 userSchema.methods.generateJWT = async function () {
   const user = this;
-  const token = jwt.sign(user._id.toHexString(), JWT_SECRET);
+  const token = jwt.sign(user._id.toHexString(), JWT_SECRET, {
+    expiresIn: "1h",
+  });
   user.token = token;
   try {
     const savedUser = await user.save();

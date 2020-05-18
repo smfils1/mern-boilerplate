@@ -3,7 +3,6 @@ const User = require("../models/user");
 const auth = (req, res, next) => {
   //Get cookies
   const token = req.cookies.jwt_auth;
-  console.log(token);
   try {
     //Verify token
     const signedUserId = User.verifyJWT(token);

@@ -5,9 +5,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 
 const User = require("./models/user");
 const auth = require("./middleware/auth");
+
+const NODE_ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT;
 
 mongoose
@@ -18,6 +21,7 @@ mongoose
   .catch((err) => console.error(err));
 
 app.use(cors());
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -52,6 +56,12 @@ app.post("/api/users/login", async (req, res) => {
 
     // Send credential cookie
     const signedUser = await user.generateJWT();
+    res.cookie("jwt_auth", signedUser.token, {
+      maxAge: 3600, //1 hour
+      httpOnly: true,
+      sameSite: true,
+      secure: NODE_ENV === "production",
+    });
     res.cookie("jwt_auth", signedUser.token).status(200).json({
       signedUser,
     });
