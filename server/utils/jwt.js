@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const config = require("../config");
 
 const generateToken = ({ id, errorMessage, secret }) => {
   try {
@@ -10,10 +9,11 @@ const generateToken = ({ id, errorMessage, secret }) => {
   }
 };
 
-verifyToken = (jwToken, errorMessage) => {
+const verifyToken = ({ token, errorMessage, secret }) => {
   try {
-    const token = jwt.verify(jwToken, config.JWT_SECRET);
-    return token.id;
+    const jwToken = jwt.verify(token, secret);
+
+    return jwToken.id;
   } catch (err) {
     throw errorMessage || err;
   }

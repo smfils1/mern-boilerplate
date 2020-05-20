@@ -1,6 +1,4 @@
 const bcrypt = require("bcrypt");
-const { verifyToken } = require("../../utils/jwt");
-const { JWT_SECRET } = require("../../config");
 
 const methods = (userSchema) => {
   userSchema.methods.comparePassword = function (plainPassword) {
@@ -11,11 +9,13 @@ const methods = (userSchema) => {
   userSchema.statics.validate = async function ({ email, password, error }) {
     const User = this;
     let user;
+
     try {
-      const user = await User.findOne({ email });
+      user = await User.findOne({ email });
       if (!user) throw error;
 
       const isPasswordMatch = await user.comparePassword(password);
+
       if (isPasswordMatch) {
         return user;
       } else {

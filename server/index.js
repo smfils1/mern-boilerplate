@@ -9,6 +9,7 @@ const config = require("./config");
 const dbConnect = require("./config/db");
 const User = require("./models/user/user");
 const auth = require("./middleware/auth");
+const authReset = require("./middleware/authReset");
 const errorResponse = require("./utils/error");
 const { generateToken } = require("./utils/jwt");
 const { sendResetPasswordLink } = require("./services/email");
@@ -38,6 +39,8 @@ app.post("/api/users/login", async (req, res) => {
 
   try {
     //Validate credentials
+    console.log(loginInfo);
+
     const user = await User.validate({
       ...loginInfo,
       error: {
@@ -51,6 +54,7 @@ app.post("/api/users/login", async (req, res) => {
       secret: config.JWT_SECRET,
       errorMessage: null,
     });
+
     res
       .cookie("jwt_auth", token, {
         maxAge: 3600, //1 hour
@@ -86,7 +90,7 @@ app.post("/api/users/forgot", async (req, res) => {
       errorMessage: null,
     });
     await sendResetPasswordLink({
-      to: "smfils1@gmail.com",
+      to: loginInfo.email,
       from: config.EMAIL,
       url: {
         link: `${config.WEBSITE}/api/users/reset/${token}`,
@@ -107,6 +111,23 @@ app.post("/api/users/forgot", async (req, res) => {
   }
 });
 
+app.post("/api/users/reset/:token", authReset, async (req, res) => {
+  const { newPassword } = req.body;
+  const { userId } = req;
+  try {
+    // Need to update user password
+
+    res.json({
+      message: "success",
+      newPassword,
+      userId,
+    });
+  } catch (err) {
+    res.json({
+      message: "Bad",
+    });
+  }
+});
 app.listen(config.PORT, () => {
   console.log(`Server is running on port ${config.PORT}`);
   dbConnect();

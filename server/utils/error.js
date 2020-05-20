@@ -8,7 +8,10 @@ const errorResponse = (err, res) => {
       name: err.name,
       message: err.message,
     });
-  } else if (err.name === "JsonWebTokenError") {
+  } else if (
+    err.name === "JsonWebTokenError" ||
+    err.name === "TokenExpiredError"
+  ) {
     res.status(401).json({
       name: "CredentialsError",
       message: "Invalid Token",

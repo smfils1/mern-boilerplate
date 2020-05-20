@@ -2,23 +2,22 @@ const { verifyToken } = require("../utils/jwt");
 const errorResponse = require("../utils/error");
 const config = require("../config");
 
-const auth = (req, res, next) => {
-  //Get cookies
-  const token = req.cookies.jwt_auth;
+const authReset = (req, res, next) => {
+  //Get token
+  const { token } = req.params;
   try {
     //Verify token
-    const signedUserId = verifyToken({
+    const authUserId = verifyToken({
       token,
-      secret: config.JWT_SECRET,
-      errorMessage: null,
+      secret: config.EMAIL_RESET_SECRET,
     });
 
     //Add User to payload
-    req.userId = signedUserId;
+    req.userId = authUserId;
     next();
   } catch (err) {
     errorResponse(err, res);
   }
 };
 
-module.exports = auth;
+module.exports = authReset;
