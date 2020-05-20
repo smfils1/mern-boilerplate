@@ -39,8 +39,6 @@ app.post("/api/users/login", async (req, res) => {
 
   try {
     //Validate credentials
-    console.log(loginInfo);
-
     const user = await User.validate({
       ...loginInfo,
       error: {
@@ -116,16 +114,16 @@ app.post("/api/users/reset/:token", authReset, async (req, res) => {
   const { userId } = req;
   try {
     // Need to update user password
+    const updatedUser = await User.updatePasswordById({
+      id: userId,
+      password: newPassword,
+    });
 
     res.json({
       message: "success",
-      newPassword,
-      userId,
     });
   } catch (err) {
-    res.json({
-      message: "Bad",
-    });
+    errorResponse(err, res);
   }
 });
 app.listen(config.PORT, () => {

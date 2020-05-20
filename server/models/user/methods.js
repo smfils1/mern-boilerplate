@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const ObjectID = require("mongodb").ObjectID;
 
 const methods = (userSchema) => {
   userSchema.methods.comparePassword = function (plainPassword) {
@@ -33,6 +34,23 @@ const methods = (userSchema) => {
     try {
       const createdUser = await user.save();
       return createdUser;
+    } catch (err) {
+      throw error || err;
+    }
+  };
+
+  userSchema.statics.updatePasswordById = async function (
+    { id, password },
+    error
+  ) {
+    const User = this;
+    try {
+      const user = await User.findById({ _id: id });
+      user.password = password;
+      await user.save();
+
+      if (!user) throw error;
+      return user;
     } catch (err) {
       throw error || err;
     }
