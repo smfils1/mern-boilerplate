@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { loginUser, clearAuthMessage } from "../../redux/actions/auth";
+import { registerUser, clearAuthMessage } from "../../redux/actions/auth";
 import Alert from "react-bootstrap/Alert";
-
-class LoginPage extends Component {
+class RegisterPage extends Component {
   state = {
+    name: "",
     email: "",
     password: "",
     errors: {},
@@ -22,23 +22,35 @@ class LoginPage extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const user = {
+      name: this.state.name,
       email: this.state.email,
       password: this.state.password,
     };
-    await this.props.loginUser(user, this.props.history);
+    await this.props.registerUser(user);
   };
-
-  alertMessage = ({ error }) => {
+  alertMessage = ({ success, error }) => {
+    if (success) {
+      return <Alert variant="success">{success}</Alert>;
+    }
     if (error) {
       return <Alert variant="danger">{error}</Alert>;
     }
   };
-
   render() {
     return (
       <div className="container" style={{ marginTop: "50px", width: "700px" }}>
-        <h2 style={{ marginBottom: "40px" }}>Login</h2>
+        <h2 style={{ marginBottom: "40px" }}>Registration</h2>
         <form onSubmit={this.handleSubmit}>
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Name"
+              className="form-control"
+              name="name"
+              onChange={this.handleInputChange}
+              value={this.state.name}
+            />
+          </div>
           <div className="form-group">
             <input
               type="email"
@@ -60,10 +72,9 @@ class LoginPage extends Component {
             />
           </div>
           {this.alertMessage(this.props.auth.message)}
-
           <div className="form-group">
             <button type="submit" className="btn btn-primary">
-              Login User
+              Register User
             </button>
           </div>
         </form>
@@ -80,9 +91,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loginUser: (data, history) => dispatch(loginUser(data, history)),
+    registerUser: (data) => dispatch(registerUser(data)),
     clearAuthMessage: () => dispatch(clearAuthMessage()),
   };
 };
-//export default LoginPage;
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+//export default RegisterPage;
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterPage);
