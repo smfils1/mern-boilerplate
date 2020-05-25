@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 
-import { increment } from "../redux/actions/counter.js";
+import { requestIncrement, fetchCounter } from "../redux/actions/counter.js";
 
 const Counter = () => {
   const counter = useSelector(({ counter }) => counter);
+  const auth = useSelector(({ auth }) => auth);
   const dispatch = useDispatch();
   const handleClick = () => {
-    dispatch(increment());
+    dispatch(requestIncrement(1));
   };
+  useEffect(() => {
+    if (!auth.isAuth) {
+      console.log(1);
+      dispatch(fetchCounter());
+    }
+  }, []);
 
   return (
     <div className="text-center">

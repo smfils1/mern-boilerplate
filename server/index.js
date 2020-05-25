@@ -25,8 +25,49 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.get("/api/user", auth, (req, res) => {
-  res.json({ id: req.userId });
+app.get("/api/user", auth, async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.userId });
+    res.json({
+      name: user.name,
+      email: user.email,
+    });
+  } catch (err) {
+    console.log(err);
+    errorResponse(err, res);
+  }
+});
+
+app.patch("/api/users", auth, async (req, res) => {
+  const { counter } = req.body;
+  try {
+    if (counter) {
+      await User.incrementCounter(counter, {
+        name: "UpdateError",
+        message: "There's an issue updating counter",
+      });
+      res.json({ message: "success" });
+    } else {
+      throw {
+        name: "InvalidUpdateError",
+        message: "Only updates to user's counter is allowed",
+      };
+    }
+  } catch (err) {
+    errorResponse(err, res);
+  }
+});
+
+app.get("/api/counter", async (req, res) => {
+  try {
+    const counter = await User.counter({
+      name: "GetError",
+      message: "There's an issue getting counter",
+    });
+    res.json({ counter });
+  } catch (err) {
+    errorResponse(err, res);
+  }
 });
 
 app.get("/api/logout", (req, res) => {
@@ -69,7 +110,9 @@ app.post("/api/users/login", async (req, res) => {
       })
       .status(200)
       .json({
-        message: "success",
+        name: user.name,
+        email: user.email,
+        counter: user.counter,
       });
   } catch (err) {
     errorResponse(err, res);

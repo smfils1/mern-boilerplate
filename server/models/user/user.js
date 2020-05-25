@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
     minlength: [5, "{PATH} must be >= 5 characters"],
     required: [true, "{PATH} is required"],
   },
-  role: {
+  counter: {
     type: Number,
     default: 0,
   },

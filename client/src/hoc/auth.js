@@ -18,6 +18,10 @@ export default (OriginalComponent, isPrivate = true) => {
       }
     };
 
+    componentDidMount() {
+      this.checkAuth();
+    }
+
     render() {
       return <OriginalComponent {...this.props} />;
     }

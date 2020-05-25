@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { setUser } from "./user";
 
 const request = axios.create({
   withCredentials: true,
@@ -61,14 +61,24 @@ const registerUser = (data) => {
   };
 };
 
-const loginUser = (data, history) => {
+const loginUser = (formData, history) => {
   return async (dispatch) => {
     try {
-      await request.post("http://localhost:5000/api/users/login", data);
+      const { data } = await request.post(
+        "http://localhost:5000/api/users/login",
+        formData
+      );
       dispatch(
         requestLogin({
           isAuth: true,
           message: {},
+        })
+      );
+
+      dispatch(
+        setUser({
+          username: data.name,
+          email: data.email,
         })
       );
       history.push("/");
@@ -93,6 +103,12 @@ const logoutUser = (history) => {
           isAuth: false,
         })
       );
+      dispatch(
+        setUser({
+          username: "Guest",
+          email: null,
+        })
+      );
       history.push("/");
     } catch (err) {
       dispatch(
@@ -108,10 +124,17 @@ const logoutUser = (history) => {
 const auth = () => {
   return async (dispatch) => {
     try {
-      await request.get("http://localhost:5000/api/user");
+      const { data } = await request.get("http://localhost:5000/api/user");
       dispatch(
         requestAuth({
           isAuth: true,
+        })
+      );
+
+      dispatch(
+        setUser({
+          username: data.name,
+          email: data.email,
         })
       );
     } catch (err) {

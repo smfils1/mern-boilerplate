@@ -55,5 +55,24 @@ const methods = (userSchema) => {
       throw error || err;
     }
   };
+
+  userSchema.statics.incrementCounter = async function (counter, error) {
+    const User = this;
+    try {
+      await User.updateMany({ counter: { $gte: 0 } }, { $inc: { counter } });
+    } catch (err) {
+      throw error || err;
+    }
+  };
+
+  userSchema.statics.counter = async function (error) {
+    const User = this;
+    try {
+      const user = await User.findOne({ counter: { $gte: 0 } });
+      return user ? user.counter : 0;
+    } catch (err) {
+      throw error || err;
+    }
+  };
 };
 module.exports = methods;
