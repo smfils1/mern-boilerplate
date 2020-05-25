@@ -6,20 +6,26 @@ import HistoryPage from "./components/HistoryPage/HistoryPage";
 import RegisterPage from "./components/RegisterPage/RegisterPage";
 import LoginPage from "./components/LoginPage/LoginPage";
 import NavBar from "./components/NavBar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import auth from "./hoc/auth";
 
 function App() {
+  const AuthHistory = auth(HistoryPage);
+  const AuthHome = auth(HomePage, false);
+  const AuthLogin = auth(LoginPage, false);
+  const AuthRegister = auth(RegisterPage, false);
   return (
     <div>
       <NavBar />
 
       <Switch>
-        <Route exact path="/" render={(props) => <HomePage {...props} />} />
-        <Route path="/login" render={(props) => <LoginPage {...props} />} />
+        <Route exact path="/" render={(props) => <AuthHome {...props} />} />
+        <Route path="/history" render={(props) => <AuthHistory {...props} />} />
+        <Route path="/login" render={(props) => <AuthLogin {...props} />} />
         <Route
           path="/register"
-          render={(props) => <RegisterPage {...props} />}
+          render={(props) => <AuthRegister {...props} />}
         />
-        <Route path="/history" render={(props) => <HistoryPage {...props} />} />
       </Switch>
     </div>
   );

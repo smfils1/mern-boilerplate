@@ -1,16 +1,34 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
-const registerAuth = ({ isAuth, message }) => {
+const request = axios.create({
+  withCredentials: true,
+});
+const requestRegistration = ({ isAuth, message }) => {
   return {
-    type: "REGISTER_AUTH",
+    type: "REQUEST_REGISTRATION",
     payload: { isAuth, message },
   };
 };
 
-const requestAuth = ({ isAuth, message }) => {
+const requestLogin = ({ isAuth, message }) => {
+  return {
+    type: "REQUEST_LOGIN",
+    payload: { isAuth, message },
+  };
+};
+
+const logout = ({ isAuth }) => {
+  return {
+    type: "LOGOUT",
+    payload: { isAuth },
+  };
+};
+
+const requestAuth = ({ isAuth }) => {
   return {
     type: "REQUEST_AUTH",
-    payload: { isAuth, message },
+    payload: { isAuth },
   };
 };
 
@@ -24,12 +42,9 @@ const clearAuthMessage = () => {
 const registerUser = (data) => {
   return async (dispatch) => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/users/signup",
-        data
-      );
+      await request.post("http://localhost:5000/api/users/signup", data);
       dispatch(
-        requestAuth({
+        requestRegistration({
           isAuth: false,
           message: { success: "Authentication is successful. Please login." },
         })
@@ -37,7 +52,7 @@ const registerUser = (data) => {
     } catch (err) {
       const error = err.response ? err.response.data.message : "Server is down";
       dispatch(
-        requestAuth({
+        requestRegistration({
           isAuth: false,
           message: { error },
         })
@@ -49,24 +64,18 @@ const registerUser = (data) => {
 const loginUser = (data, history) => {
   return async (dispatch) => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/users/login",
-        data
-      );
+      await request.post("http://localhost:5000/api/users/login", data);
       dispatch(
-        requestAuth({
+        requestLogin({
           isAuth: true,
           message: {},
         })
       );
-      console.log(history);
       history.push("/");
     } catch (err) {
-      console.log(err);
-
       const error = err.response ? err.response.data.message : "Server is down";
       dispatch(
-        requestAuth({
+        requestLogin({
           isAuth: false,
           message: { error },
         })
@@ -74,4 +83,44 @@ const loginUser = (data, history) => {
     }
   };
 };
-export { registerUser, loginUser, clearAuthMessage };
+
+const logoutUser = (history) => {
+  return async (dispatch) => {
+    try {
+      await request.get("http://localhost:5000/api/logout");
+      dispatch(
+        logout({
+          isAuth: false,
+        })
+      );
+      history.push("/");
+    } catch (err) {
+      dispatch(
+        logout({
+          isAuth: false,
+        })
+      );
+      console.log(err);
+    }
+  };
+};
+
+const auth = () => {
+  return async (dispatch) => {
+    try {
+      await request.get("http://localhost:5000/api/user");
+      dispatch(
+        requestAuth({
+          isAuth: true,
+        })
+      );
+    } catch (err) {
+      dispatch(
+        requestAuth({
+          isAuth: false,
+        })
+      );
+    }
+  };
+};
+export { registerUser, loginUser, auth, clearAuthMessage, logoutUser };

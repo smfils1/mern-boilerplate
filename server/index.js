@@ -14,7 +14,12 @@ const errorResponse = require("./utils/error");
 const { generateToken } = require("./utils/jwt");
 const { sendResetPasswordLink } = require("./services/email");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
+);
 app.use(helmet()); //Secure HTTP headers
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -24,6 +29,9 @@ app.get("/api/user", auth, (req, res) => {
   res.json({ id: req.userId });
 });
 
+app.get("/api/logout", (req, res) => {
+  res.clearCookie("jwt_auth").json({ message: "success" });
+});
 app.post("/api/users/signup", async (req, res) => {
   const userInfo = req.body;
   try {
@@ -36,7 +44,6 @@ app.post("/api/users/signup", async (req, res) => {
 
 app.post("/api/users/login", async (req, res) => {
   const loginInfo = req.body;
-
   try {
     //Validate credentials
     const user = await User.validate({
@@ -55,9 +62,9 @@ app.post("/api/users/login", async (req, res) => {
 
     res
       .cookie("jwt_auth", token, {
-        maxAge: 3600, //1 hour
+        maxAge: 3600000, //1 hour
         httpOnly: true,
-        sameSite: true,
+        // sameSite: true,
         secure: config.NODE_ENV === "production",
       })
       .status(200)

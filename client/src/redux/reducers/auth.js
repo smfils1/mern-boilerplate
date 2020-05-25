@@ -5,9 +5,11 @@ const initialState = {
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "REGISTER_AUTH":
+    case "REQUEST_REGISTRATION":
+    case "REQUEST_LOGIN":
     case "REQUEST_AUTH":
     case "CLEAR_AUTH_MESSAGE":
+    case "LOGOUT":
       return { ...state, ...action.payload };
     default:
       return state;
