@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const userSchema = mongoose.Schema({
   name: {
     type: String,
-    maxlength: [50, "{PATH} must be <= 50 characters"],
     required: [true, "{PATH} is required"],
   },
   email: {
@@ -18,10 +17,6 @@ const userSchema = mongoose.Schema({
     type: String,
     minlength: [5, "{PATH} must be >= 5 characters"],
     required: [true, "{PATH} is required"],
-  },
-  counter: {
-    type: Number,
-    default: 0,
   },
 });
 userSchema.plugin(uniqueValidator, { message: "{PATH} must be unique." });

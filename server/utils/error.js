@@ -2,12 +2,16 @@ const errorResponse = (err, res) => {
   if (
     err.name === "CredentialsError" ||
     err.name === "InvalidUserError" ||
-    err.name === "InvalidUpdateError" ||
-    err.name === "ValidationError"
+    err.name === "InvalidUpdateError"
   ) {
     res.status(400).json({
       name: err.name,
       message: err.message,
+    });
+  } else if (err.name === "ValidationError") {
+    res.status(400).json({
+      name: err.name,
+      message: formatError(err.message),
     });
   } else if (
     err.name === "JsonWebTokenError" ||
@@ -30,4 +34,14 @@ const errorResponse = (err, res) => {
   }
 };
 
+const formatError = (err) => {
+  const errors = {};
+  const allErrors = err.substring(err.indexOf(":") + 1).trim();
+  const errorArray = allErrors.split(",").map((err) => err.trim());
+  errorArray.forEach((error) => {
+    const [key, value] = error.split(":").map((err) => err.trim());
+    errors[key] = value;
+  });
+  return errors;
+};
 module.exports = errorResponse;

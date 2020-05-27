@@ -29,6 +29,7 @@ const methods = (userSchema) => {
 
   userSchema.statics.create = async function (userInfo, error) {
     const User = this;
+    console.log(userInfo);
     const user = new User(userInfo);
 
     try {
@@ -51,25 +52,6 @@ const methods = (userSchema) => {
 
       if (!user) throw error;
       return user;
-    } catch (err) {
-      throw error || err;
-    }
-  };
-
-  userSchema.statics.incrementCounter = async function (counter, error) {
-    const User = this;
-    try {
-      await User.updateMany({ counter: { $gte: 0 } }, { $inc: { counter } });
-    } catch (err) {
-      throw error || err;
-    }
-  };
-
-  userSchema.statics.counter = async function (error) {
-    const User = this;
-    try {
-      const user = await User.findOne({ counter: { $gte: 0 } });
-      return user ? user.counter : 0;
     } catch (err) {
       throw error || err;
     }

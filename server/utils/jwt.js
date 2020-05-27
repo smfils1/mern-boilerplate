@@ -1,8 +1,11 @@
 const jwt = require("jsonwebtoken");
+const config = require("../config");
 
 const generateToken = ({ id, errorMessage, secret }) => {
   try {
-    const token = jwt.sign({ id }, secret, { expiresIn: "1h" });
+    const token = jwt.sign({ id }, secret, {
+      expiresIn: `${config.SESSION_DURATION * 60 * 10000}`,
+    });
     return token;
   } catch (err) {
     throw errorMessage || err;
