@@ -29,7 +29,6 @@ const methods = (userSchema) => {
 
   userSchema.statics.create = async function (userInfo, error) {
     const User = this;
-    console.log(userInfo);
     const user = new User(userInfo);
 
     try {

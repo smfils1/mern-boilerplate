@@ -4,10 +4,10 @@ const paginate = (model, auth = false) => async (req, res, next) => {
 
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
-  const count = await model.countDocuments();
-  const maxPages = Math.ceil(count / limit) || 1;
+  const filter = auth ? { user: req.userId } : {};
+  const count = await model.countDocuments(filter);
 
-  const results = { maxPages };
+  const results = {};
 
   if (endIndex < count) {
     results.next = {
@@ -23,8 +23,8 @@ const paginate = (model, auth = false) => async (req, res, next) => {
     };
   }
   try {
-    const filter = auth ? { user: req.userId } : {};
     results.results = await model.find(filter).limit(limit).skip(startIndex);
+    results.maxPages = Math.ceil(count / limit) || 1;
     res.paginatedResults = results;
     next();
   } catch (err) {
