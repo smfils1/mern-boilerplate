@@ -12,7 +12,10 @@ export default (OriginalComponent, isPrivate = true) => {
       if (
         this.props.auth.isAuth &&
         (this.props.location.pathname === "/login" ||
-          this.props.location.pathname === "/register")
+          this.props.location.pathname === "/register" ||
+          this.props.location.pathname ===
+            `/reset/${this.props.match.params.id}` ||
+          this.props.location.pathname === "/forgot")
       ) {
         this.props.history.push("/");
       }

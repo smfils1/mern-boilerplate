@@ -14,7 +14,7 @@ export default () => {
             fontSize: "2em",
           }}
         >
-          Welcome {user.username}
+          Welcome {user.name}
         </p>
         <p
           className="p-4 text-center"

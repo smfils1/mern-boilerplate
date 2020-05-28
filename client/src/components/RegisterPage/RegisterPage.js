@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { registerUser, clearAuthMessage } from "../../redux/actions/auth";
+import { isString, isPlainObject } from "lodash";
 import Alert from "react-bootstrap/Alert";
 class RegisterPage extends Component {
   state = {
@@ -31,9 +32,18 @@ class RegisterPage extends Component {
   alertMessage = ({ success, error }) => {
     if (success) {
       return <Alert variant="success">{success}</Alert>;
-    }
-    if (error) {
+    } else if (error && isString(error)) {
       return <Alert variant="danger">{error}</Alert>;
+    } else if (error && isPlainObject(error)) {
+      const errors = Object.values(error);
+
+      return errors.map((err, index) => {
+        return (
+          <Alert key={index} variant="danger">
+            {err}
+          </Alert>
+        );
+      });
     }
   };
   render() {
@@ -74,7 +84,7 @@ class RegisterPage extends Component {
           {this.alertMessage(this.props.auth.message)}
           <div className="form-group">
             <button type="submit" className="btn btn-primary">
-              Register User
+              Register
             </button>
           </div>
         </form>

@@ -3,13 +3,14 @@ import Table from "react-bootstrap/Table";
 
 function HistoryTable(props) {
   const { columns, data } = props;
-
+  console.log(data);
   const createTableObj = (columns, data) => {
     const headers = (
       <thead>
         <tr>
-          {columns.map(({ title }) => (
+          {columns.map(({ title }, index) => (
             <th
+              key={index}
               className="p-3 text-center"
               style={{
                 fontSize: "1.5em",
@@ -23,25 +24,33 @@ function HistoryTable(props) {
     );
     const dataFields = columns.map(({ dataField }) => dataField);
 
-    let body = data.map((row) => {
+    let body = data.map((row, index1) => {
       const newRow = [];
-      for (const field of dataFields) {
+      dataFields.forEach((field, index2) => {
+        console.log(field);
         if (field === "createdAt") {
           newRow.push(
-            <td className="p-md-3">{new Date(row[field]).toString()}</td>
+            <td key={index1 + index2 + ""} className="p-md-3">
+              {new Date(row[field]).toString()}
+            </td>
           );
         } else {
-          newRow.push(<td className="p-md-3">{row[field]}</td>);
+          newRow.push(
+            <td key={index1 + index2 + ""} className="p-md-3">
+              {row[field]}
+            </td>
+          );
         }
-      }
-      return <tr>{newRow}</tr>;
+      });
+      return <tr key={index1}>{newRow}</tr>;
     });
+
     body = <tbody>{body}</tbody>;
     return { headers, body };
   };
 
   const { headers, body } = createTableObj(columns, data);
-  console.log(headers);
+
   return (
     <div>
       <Table striped bordered hover variant="dark" responsive>

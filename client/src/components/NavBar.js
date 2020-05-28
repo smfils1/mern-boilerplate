@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/actions/auth";
 import { withRouter } from "react-router";
@@ -34,9 +34,8 @@ const NavBar = (props) => {
                   to="#"
                   onClick={() => {
                     dispatch(logoutUser(props.history));
-                    console.log("out");
                   }}
-                  className=".bg-transparent nav-link text-uppercase text-white m-3"
+                  className="nav-link text-uppercase text-white m-3"
                 >
                   {element}
                 </Link>

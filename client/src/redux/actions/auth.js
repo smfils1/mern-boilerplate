@@ -11,6 +11,19 @@ const requestRegistration = ({ isAuth, message }) => {
   };
 };
 
+const requestResetLink = ({ message }) => {
+  return {
+    type: "REQUEST_RESET_LINK",
+    payload: { message },
+  };
+};
+
+const requestPasswordReset = ({ message }) => {
+  return {
+    type: "REQUEST_RESET",
+    payload: { message },
+  };
+};
 const requestLogin = ({ isAuth, message }) => {
   return {
     type: "REQUEST_LOGIN",
@@ -39,10 +52,52 @@ const clearAuthMessage = () => {
   };
 };
 
+const sendResetLink = (data) => {
+  return async (dispatch) => {
+    try {
+      await request.post("http://localhost:5000/api/auth/forgot", data);
+      dispatch(
+        requestResetLink({
+          message: { success: "Reset Link has been sent" },
+        })
+      );
+    } catch (err) {
+      const error = err.response ? err.response.data.message : "Server is down";
+      dispatch(
+        requestResetLink({
+          message: { error },
+        })
+      );
+    }
+  };
+};
+
+//TODO
+const resetPassword = (data, id) => {
+  return async (dispatch) => {
+    try {
+      await request.post(`http://localhost:5000/api/auth/reset/${id}`, data);
+      dispatch(
+        requestPasswordReset({
+          message: { success: "Reset Link has been sent" },
+        })
+      );
+    } catch (err) {
+      console.log(err.response.data.message);
+      const error = err.response ? err.response.data.message : "Server is down";
+      dispatch(
+        requestPasswordReset({
+          isAuth: false,
+          message: { error },
+        })
+      );
+    }
+  };
+};
 const registerUser = (data) => {
   return async (dispatch) => {
     try {
-      await request.post("http://localhost:5000/api/users/signup", data);
+      await request.post("http://localhost:5000/api/auth/register", data);
       dispatch(
         requestRegistration({
           isAuth: false,
@@ -65,7 +120,7 @@ const loginUser = (formData, history) => {
   return async (dispatch) => {
     try {
       const { data } = await request.post(
-        "http://localhost:5000/api/users/login",
+        "http://localhost:5000/api/auth/login",
         formData
       );
       dispatch(
@@ -77,7 +132,7 @@ const loginUser = (formData, history) => {
 
       dispatch(
         setUser({
-          username: data.name,
+          name: data.name,
           email: data.email,
         })
       );
@@ -97,7 +152,7 @@ const loginUser = (formData, history) => {
 const logoutUser = (history) => {
   return async (dispatch) => {
     try {
-      await request.get("http://localhost:5000/api/logout");
+      await request.get("http://localhost:5000/api/auth/logout");
       dispatch(
         logout({
           isAuth: false,
@@ -105,7 +160,7 @@ const logoutUser = (history) => {
       );
       dispatch(
         setUser({
-          username: "Guest",
+          name: "Guest",
           email: null,
         })
       );
@@ -124,7 +179,7 @@ const logoutUser = (history) => {
 const auth = () => {
   return async (dispatch) => {
     try {
-      const { data } = await request.get("http://localhost:5000/api/user");
+      const { data } = await request.get("http://localhost:5000/api/users");
       dispatch(
         requestAuth({
           isAuth: true,
@@ -133,7 +188,7 @@ const auth = () => {
 
       dispatch(
         setUser({
-          username: data.name,
+          name: data.name,
           email: data.email,
         })
       );
@@ -146,4 +201,12 @@ const auth = () => {
     }
   };
 };
-export { registerUser, loginUser, auth, clearAuthMessage, logoutUser };
+export {
+  registerUser,
+  loginUser,
+  auth,
+  clearAuthMessage,
+  logoutUser,
+  sendResetLink,
+  resetPassword,
+};

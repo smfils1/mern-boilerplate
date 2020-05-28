@@ -1,13 +1,11 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
-import { loginUser, clearAuthMessage } from "../../redux/actions/auth";
+import { sendResetLink, clearAuthMessage } from "../../redux/actions/auth";
 import Alert from "react-bootstrap/Alert";
 
-class LoginPage extends Component {
+class ForgotPasswordPage extends Component {
   state = {
     email: "",
-    password: "",
     errors: {},
   };
 
@@ -24,21 +22,22 @@ class LoginPage extends Component {
     e.preventDefault();
     const user = {
       email: this.state.email,
-      password: this.state.password,
     };
-    await this.props.loginUser(user, this.props.history);
+    await this.props.sendResetLink(user);
   };
 
-  alertMessage = ({ error }) => {
+  alertMessage = ({ error, success }) => {
     if (error) {
       return <Alert variant="danger">{error}</Alert>;
+    } else if (success) {
+      return <Alert variant="success">{success}</Alert>;
     }
   };
 
   render() {
     return (
       <div className="container" style={{ marginTop: "50px", width: "700px" }}>
-        <h2 style={{ marginBottom: "40px" }}>Login</h2>
+        <h2 style={{ marginBottom: "40px" }}>Forgot Password</h2>
         <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <input
@@ -50,24 +49,11 @@ class LoginPage extends Component {
               value={this.state.email}
             />
           </div>
-          <div className="form-group">
-            <input
-              type="password"
-              placeholder="Password"
-              className="form-control"
-              name="password"
-              onChange={this.handleInputChange}
-              value={this.state.password}
-            />
-          </div>
-          <NavLink to="/forgot" className="text-dark">
-            Forgot Password?
-          </NavLink>
           {this.alertMessage(this.props.auth.message)}
 
           <div className="form-group">
             <button type="submit" className="btn btn-primary">
-              Login
+              Send Reset Link
             </button>
           </div>
         </form>
@@ -84,9 +70,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    loginUser: (data, history) => dispatch(loginUser(data, history)),
+    sendResetLink: (data) => dispatch(sendResetLink(data)),
     clearAuthMessage: () => dispatch(clearAuthMessage()),
   };
 };
 //export default LoginPage;
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPasswordPage);

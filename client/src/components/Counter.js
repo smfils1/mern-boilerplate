@@ -9,13 +9,10 @@ const Counter = () => {
   const auth = useSelector(({ auth }) => auth);
   const dispatch = useDispatch();
   const handleClick = () => {
-    dispatch(requestIncrement(1));
+    dispatch(requestIncrement(1, counter));
   };
   useEffect(() => {
-    if (!auth.isAuth) {
-      console.log(1);
-      dispatch(fetchCounter());
-    }
+    dispatch(fetchCounter());
   }, []);
 
   return (
