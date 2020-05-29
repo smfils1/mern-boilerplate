@@ -1,5 +1,6 @@
 import axios from "axios";
 import { updateHistory } from "./history";
+import { emitCountUpdate } from "./notification";
 const api = axios.create({
   withCredentials: true,
 });
@@ -28,18 +29,20 @@ const fetchCounter = () => {
   };
 };
 
-const requestIncrement = (count, currentCount) => {
+const requestIncrement = ({ count, currentCount, name }) => {
   return async (dispatch) => {
     try {
       await api.patch("http://localhost:5000/api/counter", {
         increment: count,
       });
+      currentCount++;
       dispatch(increment(count));
-      dispatch(updateHistory(currentCount + count));
+      emitCountUpdate({ name, action: "+1", currentCount });
+      dispatch(updateHistory(currentCount));
     } catch (err) {
       return;
     }
   };
 };
 
-export { requestIncrement, fetchCounter };
+export { requestIncrement, fetchCounter, setCounter };

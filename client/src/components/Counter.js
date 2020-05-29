@@ -7,9 +7,12 @@ import { requestIncrement, fetchCounter } from "../redux/actions/counter.js";
 const Counter = () => {
   const counter = useSelector(({ counter }) => counter);
   const auth = useSelector(({ auth }) => auth);
+  const user = useSelector(({ user }) => user);
   const dispatch = useDispatch();
   const handleClick = () => {
-    dispatch(requestIncrement(1, counter));
+    dispatch(
+      requestIncrement({ count: 1, currentCount: counter, name: user.name })
+    );
   };
   useEffect(() => {
     dispatch(fetchCounter());

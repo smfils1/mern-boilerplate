@@ -4,7 +4,7 @@ const config = require("../config");
 const generateToken = ({ id, errorMessage, secret }) => {
   try {
     const token = jwt.sign({ id }, secret, {
-      expiresIn: `${config.SESSION_DURATION * 60 * 10000}`,
+      expiresIn: `${config.SESSION_DURATION * 60 * 1000}`,
     });
     return token;
   } catch (err) {

@@ -32,7 +32,7 @@ router.post("/login", async (req, res) => {
     //Send credential cookies
     res
       .cookie("jwt_auth", token, {
-        maxAge: config.SESSION_DURATION * 60 * 10000,
+        maxAge: config.SESSION_DURATION * 60 * 1000,
         httpOnly: true,
         sameSite: true,
         secure: config.NODE_ENV === "production",

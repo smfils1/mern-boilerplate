@@ -5,6 +5,10 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 
+//Socket Setup
+const server = require("./socket")(app);
+
+//Configurations
 const config = require("./config");
 const dbConnect = require("./config/db");
 
@@ -19,6 +23,8 @@ const website =
   config.NODE_ENV === "production"
     ? config.WEBSITE_URL
     : "http://localhost:3000";
+
+//Use Middlewares
 app.use(
   cors({
     origin: [website],
@@ -36,7 +42,12 @@ app.use("/api/users", auth, userRoutes);
 app.use("/api/history", auth, historyRoutes);
 app.use("/api/counter", counterRoutes);
 
-app.listen(config.PORT, () => {
+// app.listen(config.PORT, () => {
+//   console.log(`Server is running on port ${config.PORT}`);
+//   dbConnect();
+// });
+
+server.listen(config.PORT, () => {
   console.log(`Server is running on port ${config.PORT}`);
   dbConnect();
 });
