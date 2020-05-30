@@ -44,7 +44,7 @@ const NavBar = (props) => {
               return (
                 <Link
                   key={index}
-                  to={element}
+                  to={"/" + element}
                   className="nav-link text-uppercase text-white m-3"
                 >
                   {element}

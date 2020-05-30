@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 import HomePage from "./components/HomePage";
 import HistoryPage from "./components/HistoryPage";
@@ -39,7 +39,7 @@ function App() {
           render={(props) => <Register {...props} />}
         />
         <Route exact path="/forgot" render={(props) => <Forgot {...props} />} />
-        <Route render={(props) => <Home {...props} />} />
+        <Route render={() => <Redirect to="/" />} />
       </Switch>
     </div>
   );
