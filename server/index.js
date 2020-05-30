@@ -20,18 +20,10 @@ const counterRoutes = require("./routes/counter");
 const userRoutes = require("./routes/users");
 const auth = require("./middleware/auth");
 
-let website;
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.resolve(__dirname, "../", "client", "build")));
-  website = config.WEBSITE_URL;
-  app.get("*", (req, res) => {
-    res.sendFile(
-      path.resolve(__dirname, "../", "client", "build", "index.html")
-    );
-  });
-} else {
-  website = "http://localhost:3000";
-}
+const website =
+  config.NODE_ENV === "production"
+    ? config.WEBSITE_URL
+    : "http://localhost:3000";
 
 //Use Middlewares
 app.use(
@@ -51,6 +43,14 @@ app.use("/api/users", auth, userRoutes);
 app.use("/api/history", auth, historyRoutes);
 app.use("/api/counter", counterRoutes);
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../", "client", "build")));
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.resolve(__dirname, "../", "client", "build", "index.html")
+    );
+  });
+}
 // app.listen(config.PORT, () => {
 //   console.log(`Server is running on port ${config.PORT}`);
 //   dbConnect();
