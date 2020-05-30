@@ -1,8 +1,11 @@
 import axios from "axios";
 import { updateHistory } from "./history";
 import { emitCountUpdate } from "./notification";
+import { BACKEND_URL } from "../../config";
+
 const api = axios.create({
   withCredentials: true,
+  baseURL: BACKEND_URL,
 });
 
 const increment = (count) => {

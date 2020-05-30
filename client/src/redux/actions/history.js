@@ -1,7 +1,9 @@
 import axios from "axios";
+import { BACKEND_URL } from "../../config";
 
 const api = axios.create({
   withCredentials: true,
+  baseURL: BACKEND_URL,
 });
 
 const requestHistory = ({ maxPages, logs, error }) => {

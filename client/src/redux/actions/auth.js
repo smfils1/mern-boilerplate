@@ -1,8 +1,10 @@
 import axios from "axios";
 import { setUser } from "./user";
+import { BACKEND_URL } from "../../config";
 
-const request = axios.create({
+const api = axios.create({
   withCredentials: true,
+  baseURL: BACKEND_URL,
 });
 const requestRegistration = ({ isAuth, message }) => {
   return {
@@ -55,7 +57,7 @@ const clearAuthMessage = () => {
 const sendResetLink = (data) => {
   return async (dispatch) => {
     try {
-      await request.post("/api/auth/forgot", data);
+      await api.post("/api/auth/forgot", data);
       dispatch(
         requestResetLink({
           message: { success: "Reset Link has been sent" },
@@ -75,7 +77,7 @@ const sendResetLink = (data) => {
 const resetPassword = (data, id) => {
   return async (dispatch) => {
     try {
-      await request.post(`/api/auth/reset/${id}`, data);
+      await api.post(`/api/auth/reset/${id}`, data);
       dispatch(
         requestPasswordReset({
           message: { success: "Password has been changed. Please login." },
@@ -95,7 +97,7 @@ const resetPassword = (data, id) => {
 const registerUser = (data) => {
   return async (dispatch) => {
     try {
-      await request.post("/api/auth/register", data);
+      await api.post("/api/auth/register", data);
       dispatch(
         requestRegistration({
           isAuth: false,
@@ -117,7 +119,7 @@ const registerUser = (data) => {
 const loginUser = (formData, history) => {
   return async (dispatch) => {
     try {
-      const { data } = await request.post("/api/auth/login", formData);
+      const { data } = await api.post("/api/auth/login", formData);
       dispatch(
         requestLogin({
           isAuth: true,
@@ -147,7 +149,7 @@ const loginUser = (formData, history) => {
 const logoutUser = (history) => {
   return async (dispatch) => {
     try {
-      await request.get("/api/auth/logout");
+      await api.get("/api/auth/logout");
       dispatch(
         logout({
           isAuth: false,
@@ -173,7 +175,7 @@ const logoutUser = (history) => {
 const auth = () => {
   return async (dispatch) => {
     try {
-      const { data } = await request.get("/api/users");
+      const { data } = await api.get("/api/users");
       dispatch(
         requestAuth({
           isAuth: true,

@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
+const path = require("path");
 
 //Socket Setup
 const server = require("./socket")(app);
@@ -19,15 +20,23 @@ const counterRoutes = require("./routes/counter");
 const userRoutes = require("./routes/users");
 const auth = require("./middleware/auth");
 
-const website =
-  config.NODE_ENV === "production"
-    ? config.WEBSITE_URL
-    : "http://localhost:3000";
+let website;
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.resolve(__dirname, "../", "client", "build")));
+  website = config.WEBSITE_URL;
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.resolve(__dirname, "../", "client", "build", "index.html")
+    );
+  });
+} else {
+  website = "http://localhost:3000";
+}
 
 //Use Middlewares
 app.use(
   cors({
-    origin: [website],
+    origin: website,
     credentials: true,
   })
 );
