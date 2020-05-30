@@ -1,4 +1,4 @@
-const http = require("https");
+const http = require("http");
 
 const socketManager = (socket) => {
   socket.on("COUNTER_UPDATE", (info) => {
