@@ -2,11 +2,11 @@ import React, { Component, useEffect } from "react";
 import {
   subscribeCountUpdate,
   clearNotification,
-} from "../../redux/actions/notification";
+} from "../redux/actions/notification";
 import { useSelector, useDispatch } from "react-redux";
 
 import { toast, ToastContainer } from "react-toastify";
-import Counter from "../Counter";
+import Counter from "./Counter";
 
 import "react-toastify/dist/ReactToastify.css";
 export default () => {

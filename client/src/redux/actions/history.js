@@ -23,9 +23,7 @@ const fetchHistory = (page, limit) => {
     try {
       const {
         data: { history },
-      } = await api.get(
-        `http://localhost:5000/api/history?page=${page}&limit=${limit}`
-      );
+      } = await api.get(`/api/history?page=${page}&limit=${limit}`);
       dispatch(
         requestHistory({
           maxPages: history.maxPages,
@@ -48,7 +46,7 @@ const fetchHistory = (page, limit) => {
 const updateHistory = (count) => {
   return async (dispatch) => {
     try {
-      await api.post("http://localhost:5000/api/history", { count });
+      await api.post("/api/history", { count });
     } catch (err) {
       dispatch(historyUpdateError(err));
     }

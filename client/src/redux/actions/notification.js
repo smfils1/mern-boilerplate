@@ -1,6 +1,7 @@
 import io from "socket.io-client";
 import { setCounter } from "./counter";
-const socket = io("http://localhost:5000");
+import { BACKEND_URL } from "../../config";
+const socket = io(BACKEND_URL);
 
 const setNotification = ({ name, action }) => {
   return {

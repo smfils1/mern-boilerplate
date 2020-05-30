@@ -3,7 +3,6 @@ import Table from "react-bootstrap/Table";
 
 function HistoryTable(props) {
   const { columns, data } = props;
-  console.log(data);
   const createTableObj = (columns, data) => {
     const headers = (
       <thead>
@@ -27,7 +26,6 @@ function HistoryTable(props) {
     let body = data.map((row, index1) => {
       const newRow = [];
       dataFields.forEach((field, index2) => {
-        console.log(field);
         if (field === "createdAt") {
           newRow.push(
             <td key={index1 + index2 + ""} className="p-md-3">

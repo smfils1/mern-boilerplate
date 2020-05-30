@@ -55,7 +55,7 @@ const clearAuthMessage = () => {
 const sendResetLink = (data) => {
   return async (dispatch) => {
     try {
-      await request.post("http://localhost:5000/api/auth/forgot", data);
+      await request.post("/api/auth/forgot", data);
       dispatch(
         requestResetLink({
           message: { success: "Reset Link has been sent" },
@@ -72,18 +72,16 @@ const sendResetLink = (data) => {
   };
 };
 
-//TODO
 const resetPassword = (data, id) => {
   return async (dispatch) => {
     try {
-      await request.post(`http://localhost:5000/api/auth/reset/${id}`, data);
+      await request.post(`/api/auth/reset/${id}`, data);
       dispatch(
         requestPasswordReset({
-          message: { success: "Reset Link has been sent" },
+          message: { success: "Password has been changed. Please login." },
         })
       );
     } catch (err) {
-      console.log(err.response.data.message);
       const error = err.response ? err.response.data.message : "Server is down";
       dispatch(
         requestPasswordReset({
@@ -97,7 +95,7 @@ const resetPassword = (data, id) => {
 const registerUser = (data) => {
   return async (dispatch) => {
     try {
-      await request.post("http://localhost:5000/api/auth/register", data);
+      await request.post("/api/auth/register", data);
       dispatch(
         requestRegistration({
           isAuth: false,
@@ -119,10 +117,7 @@ const registerUser = (data) => {
 const loginUser = (formData, history) => {
   return async (dispatch) => {
     try {
-      const { data } = await request.post(
-        "http://localhost:5000/api/auth/login",
-        formData
-      );
+      const { data } = await request.post("/api/auth/login", formData);
       dispatch(
         requestLogin({
           isAuth: true,
@@ -152,7 +147,7 @@ const loginUser = (formData, history) => {
 const logoutUser = (history) => {
   return async (dispatch) => {
     try {
-      await request.get("http://localhost:5000/api/auth/logout");
+      await request.get("/api/auth/logout");
       dispatch(
         logout({
           isAuth: false,
@@ -171,7 +166,6 @@ const logoutUser = (history) => {
           isAuth: false,
         })
       );
-      console.log(err);
     }
   };
 };
@@ -179,7 +173,7 @@ const logoutUser = (history) => {
 const auth = () => {
   return async (dispatch) => {
     try {
-      const { data } = await request.get("http://localhost:5000/api/users");
+      const { data } = await request.get("/api/users");
       dispatch(
         requestAuth({
           isAuth: true,

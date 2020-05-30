@@ -1,4 +1,4 @@
-const paginate = (model, auth = false) => async (req, res, next) => {
+const paginate = (model, auth = false, sort = {}) => async (req, res, next) => {
   const page = parseInt(req.query.page);
   const limit = parseInt(req.query.limit);
 
@@ -23,7 +23,11 @@ const paginate = (model, auth = false) => async (req, res, next) => {
     };
   }
   try {
-    results.results = await model.find(filter).limit(limit).skip(startIndex);
+    results.results = await model
+      .find(filter)
+      .sort(sort)
+      .limit(limit)
+      .skip(startIndex);
     results.maxPages = Math.ceil(count / limit) || 1;
     res.paginatedResults = results;
     next();

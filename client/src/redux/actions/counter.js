@@ -21,7 +21,7 @@ const setCounter = (count) => {
 const fetchCounter = () => {
   return async (dispatch) => {
     try {
-      const { data } = await api.get("http://localhost:5000/api/counter");
+      const { data } = await api.get("/api/counter");
       dispatch(setCounter(data.count));
     } catch (err) {
       return;
@@ -32,7 +32,7 @@ const fetchCounter = () => {
 const requestIncrement = ({ count, currentCount, name }) => {
   return async (dispatch) => {
     try {
-      await api.patch("http://localhost:5000/api/counter", {
+      await api.patch("/api/counter", {
         increment: count,
       });
       currentCount++;

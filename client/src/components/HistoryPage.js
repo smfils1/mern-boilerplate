@@ -3,8 +3,9 @@ import Pagination from "@material-ui/lab/Pagination";
 
 import { useSelector, useDispatch } from "react-redux";
 import Alert from "react-bootstrap/Alert";
-import { fetchHistory } from "../../redux/actions/history";
+import { fetchHistory } from "../redux/actions/history";
 import HistoryTable from "./HistoryTable";
+
 const HistoryPage = () => {
   const [page, setPage] = useState(1);
   const history = useSelector(({ history }) => history);

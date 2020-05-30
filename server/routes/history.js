@@ -15,12 +15,16 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", paginate(History, true), async (req, res) => {
-  try {
-    res.status(200).json({ history: res.paginatedResults });
-  } catch (err) {
-    errorResponse(err, res);
+router.get(
+  "/",
+  paginate(History, true, { createdAt: -1 }),
+  async (req, res) => {
+    try {
+      res.status(200).json({ history: res.paginatedResults });
+    } catch (err) {
+      errorResponse(err, res);
+    }
   }
-});
+);
 
 module.exports = router;

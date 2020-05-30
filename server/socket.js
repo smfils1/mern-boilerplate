@@ -1,9 +1,7 @@
 const http = require("http");
 
 const socketManager = (socket) => {
-  console.log("Connected");
   socket.on("COUNTER_UPDATE", (info) => {
-    console.log(info);
     socket.broadcast.emit("COUNTER_UPDATE", info);
   });
 };
