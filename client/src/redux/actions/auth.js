@@ -13,6 +13,13 @@ const requestRegistration = ({ isAuth, message }) => {
   };
 };
 
+const setAuthMessage = ({ message }) => {
+  return {
+    type: "SET_AUTH_MESSAGE",
+    payload: { message },
+  };
+};
+
 const requestResetLink = ({ message }) => {
   return {
     type: "REQUEST_RESET_LINK",
@@ -205,4 +212,5 @@ export {
   logoutUser,
   sendResetLink,
   resetPassword,
+  setAuthMessage,
 };

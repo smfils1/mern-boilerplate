@@ -1,8 +1,10 @@
-import React, { Component, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   subscribeCountUpdate,
   clearNotification,
 } from "../redux/actions/notification";
+
+import { clearAuthMessage } from "../redux/actions/auth";
 import { useSelector, useDispatch } from "react-redux";
 
 import { toast, ToastContainer } from "react-toastify";
@@ -11,6 +13,7 @@ import Counter from "./Counter";
 import "react-toastify/dist/ReactToastify.css";
 export default () => {
   const user = useSelector(({ user }) => user);
+  const auth = useSelector(({ auth }) => auth);
   const notification = useSelector(({ notification }) => notification);
   const dispatch = useDispatch();
 
@@ -19,11 +22,16 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    if (notification) notify(notification);
+    if (notification) notifyCount(notification);
   }, [notification]);
 
-  const notify = ({ name }) => {
+  useEffect(() => {
+    if (auth) notifyError(auth);
+  }, [auth]);
+
+  const notifyCount = ({ name }) => {
     toast.success(`${name} +1`, {
+      containerId: "count",
       autoClose: 1000,
       position: "top-left",
       onClose: () => {
@@ -33,14 +41,29 @@ export default () => {
     });
   };
 
+  const notifyError = ({ message }) => {
+    toast.error(message, {
+      containerId: "error",
+      autoClose: 1000,
+      position: "top-left",
+      onClose: () => {
+        dispatch(clearAuthMessage());
+        toast.clearWaitingQueue();
+      },
+    });
+  };
+
   return (
     <div className="min-vh-100  bg-dark text-white">
       <ToastContainer
+        enableMultiContainer
+        containerId={"count"}
         limit={1}
         style={{
           position: "static",
         }}
       />
+      <ToastContainer enableMultiContainer containerId={"error"} limit={1} />
 
       <div>
         <p

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { updateHistory } from "./history";
+import { setAuthMessage } from "./auth";
 import { emitCountUpdate } from "./notification";
 import { BACKEND_URL } from "../../config";
 
@@ -27,7 +28,8 @@ const fetchCounter = () => {
       const { data } = await api.get("/api/counter");
       dispatch(setCounter(data.count));
     } catch (err) {
-      return;
+      const error = err.response ? err.response.data.message : "Server is down";
+      dispatch(setAuthMessage({ message: error }));
     }
   };
 };
@@ -43,7 +45,15 @@ const requestIncrement = ({ count, currentCount, name }) => {
       emitCountUpdate({ name, action: "+1", currentCount });
       dispatch(updateHistory(currentCount));
     } catch (err) {
-      return;
+      let error;
+      if (err.response && err.response.status === 401) {
+        error = "Please login";
+      } else if (err.response) {
+        error = err.response.data.message;
+      } else {
+        error = "Server is down";
+      }
+      dispatch(setAuthMessage({ message: error }));
     }
   };
 };

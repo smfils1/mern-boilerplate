@@ -11,6 +11,7 @@ const authReducer = (state = initialState, action) => {
     case "REQUEST_RESET_LINK":
     case "REQUEST_RESET":
     case "CLEAR_AUTH_MESSAGE":
+    case "SET_AUTH_MESSAGE":
     case "LOGOUT":
       return { ...state, ...action.payload };
     default:
