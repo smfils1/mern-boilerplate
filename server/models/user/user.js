@@ -41,7 +41,7 @@ const userSchema = mongoose.Schema({
       type: String,
       required: [isGoogle, "{PATH} is required"],
     },
-    email: {
+    gmail: {
       type: String,
       trim: true,
       unique: true,

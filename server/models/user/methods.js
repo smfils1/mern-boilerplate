@@ -36,6 +36,7 @@ const methods = (userSchema) => {
 
     try {
       const createdUser = await user.save();
+
       return createdUser;
     } catch (err) {
       throw error || err;
@@ -51,7 +52,6 @@ const methods = (userSchema) => {
       const user = await User.findById({ _id: id });
       user.local.password = password;
       await user.save();
-      console.log(user);
 
       if (!user) throw error;
       return user;
@@ -62,7 +62,7 @@ const methods = (userSchema) => {
 
   //Google
   userSchema.statics.findOrCreate = async function (
-    { id: oauthId, displayName: name, _json: { email } },
+    { id: oauthId, displayName: name, _json: { email: gmail } },
     error
   ) {
     const User = this;
@@ -71,13 +71,11 @@ const methods = (userSchema) => {
       user = await User.findOne({ "google.oauthId": oauthId });
       if (!user) {
         user = User.create({
+          method: "google",
           google: {
-            method: "google",
-            google: {
-              oauthId,
-              name,
-              email,
-            },
+            oauthId,
+            name,
+            gmail,
           },
         });
       }

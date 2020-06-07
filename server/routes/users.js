@@ -8,9 +8,10 @@ router.get("/", async (req, res) => {
   try {
     //Get user by id
     const user = await User.findById({ _id: req.userId });
+
     res.json({
-      name: user.local.name,
-      email: user.local.email,
+      name: user.local.name || user.google.name,
+      email: user.local.email || user.google.gmail,
     });
   } catch (err) {
     errorResponse(err, res);

@@ -22,15 +22,10 @@ const counterRoutes = require("./routes/counter");
 const userRoutes = require("./routes/users");
 const auth = require("./middleware/auth");
 
-const website =
-  config.NODE_ENV === "production"
-    ? config.WEBSITE_URL
-    : "http://localhost:3000";
-
 //Use Middlewares
 app.use(
   cors({
-    origin: [website, "http://localhost:5000"],
+    origin: config.WEBSITE_URL,
     credentials: true,
   })
 );

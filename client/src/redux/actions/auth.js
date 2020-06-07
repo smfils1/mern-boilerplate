@@ -108,7 +108,7 @@ const registerUser = (data) => {
       dispatch(
         requestRegistration({
           isAuth: false,
-          message: { success: "Authentication is successful. Please login." },
+          message: { success: "Registration is successful. Please login." },
         })
       );
     } catch (err) {
@@ -153,10 +153,35 @@ const loginUser = (formData, history) => {
   };
 };
 
+const loginGoogleUser = (history) => {
+  return async (dispatch) => {
+    try {
+      const { data } = await api.get("/api/auth/google");
+      dispatch(
+        requestLogin({
+          isAuth: true,
+          message: {},
+        })
+      );
+
+      dispatch(
+        setUser({
+          name: data.name,
+          email: data.email,
+        })
+      );
+      history.push("/");
+    } catch (err) {
+      history.push("/login");
+    }
+  };
+};
+
 const logoutUser = (history) => {
   return async (dispatch) => {
     try {
       await api.get("/api/auth/logout");
+      await api.get("/api/auth/google/logout");
       dispatch(
         logout({
           isAuth: false,
@@ -188,7 +213,6 @@ const auth = () => {
           isAuth: true,
         })
       );
-
       dispatch(
         setUser({
           name: data.name,
@@ -213,4 +237,5 @@ export {
   sendResetLink,
   resetPassword,
   setAuthMessage,
+  loginGoogleUser,
 };

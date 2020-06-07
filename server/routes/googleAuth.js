@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("../config/passport");
 const errorResponse = require("../utils/error");
 const { generateToken } = require("../utils/jwt");
+const { WEBSITE_URL } = require("../config/index");
 
 const User = require("../models/user/user");
 
@@ -28,7 +29,6 @@ router.get(
         secret: config.JWT_SECRET,
         errorMessage: null,
       });
-
       //Send credential cookies
       res
         .cookie("jwt_auth", token, {
@@ -37,11 +37,12 @@ router.get(
           sameSite: true,
           secure: config.NODE_ENV === "production",
         })
-        .status(200)
-        .json({
-          name: user.google.name,
-          email: user.google.email,
-        });
+        .redirect(WEBSITE_URL);
+      // .status(200)
+      // .json({
+      //   name: user.google.name,
+      //   email: user.google.email,
+      // });
     } catch (err) {
       errorResponse(err, res);
     }

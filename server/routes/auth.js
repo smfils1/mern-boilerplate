@@ -56,13 +56,12 @@ router.get("/logout", (req, res) => {
 router.post("/register", async (req, res) => {
   const userInfo = req.body;
   const localUser = { local: userInfo };
-
   try {
     await User.create(localUser);
 
     res.status(200).json({ message: "success" });
   } catch (err) {
-    errorResponse(err, res);
+    res.json(err);
   }
 });
 
@@ -86,15 +85,12 @@ router.post("/forgot", async (req, res) => {
     });
 
     // Send reset link by email
-    const website =
-      config.NODE_ENV === "production"
-        ? config.WEBSITE_URL
-        : "http://localhost:3000";
+
     await sendResetPasswordLink({
       to: loginInfo.email,
       from: config.EMAIL,
       url: {
-        link: url.resolve(website, `/reset/${token}`),
+        link: url.resolve(config.WEBSITE_URL, `/reset/${token}`),
         time: "1 hour",
       },
     });
