@@ -40,7 +40,9 @@ const formatError = (err) => {
   const errorArray = allErrors.split(",").map((err) => err.trim());
   errorArray.forEach((error) => {
     const [key, value] = error.split(":").map((err) => err.trim());
-    errors[key] = value;
+    const authKey = key.split(".")[1] || key.split(".")[0]; //Added for new local & google schema
+    const authValue = value.split(".")[1] || key.split(".")[0]; //Added for new local & google schema
+    errors[authKey] = value;
   });
   return errors;
 };

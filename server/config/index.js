@@ -11,4 +11,6 @@ module.exports = {
   NODE_ENV: process.env.NODE_ENV,
   SESSION_DURATION: process.env.SESSION_DURATION,
   PORT: process.env.PORT,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 };

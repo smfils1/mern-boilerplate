@@ -9,8 +9,8 @@ router.get("/", async (req, res) => {
     //Get user by id
     const user = await User.findById({ _id: req.userId });
     res.json({
-      name: user.name,
-      email: user.email,
+      name: user.local.name,
+      email: user.local.email,
     });
   } catch (err) {
     errorResponse(err, res);

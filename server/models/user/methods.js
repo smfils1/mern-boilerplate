@@ -4,15 +4,18 @@ const ObjectID = require("mongodb").ObjectID;
 const methods = (userSchema) => {
   userSchema.methods.comparePassword = function (plainPassword) {
     const user = this;
-    return bcrypt.compare(plainPassword, user.password);
+
+    return bcrypt.compare(plainPassword, user.local.password);
   };
 
-  userSchema.statics.validate = async function ({ email, password, error }) {
+  userSchema.statics.validate = async function ({
+    local: { email, password },
+    error,
+  }) {
     const User = this;
     let user;
-
     try {
-      user = await User.findOne({ email });
+      user = await User.findOne({ "local.email": email });
       if (!user) throw error;
 
       const isPasswordMatch = await user.comparePassword(password);
@@ -46,8 +49,9 @@ const methods = (userSchema) => {
     const User = this;
     try {
       const user = await User.findById({ _id: id });
-      user.password = password;
+      user.local.password = password;
       await user.save();
+      console.log(user);
 
       if (!user) throw error;
       return user;
@@ -55,5 +59,33 @@ const methods = (userSchema) => {
       throw error || err;
     }
   };
+
+  //Google
+  userSchema.statics.findOrCreate = async function (
+    { id: oauthId, displayName: name, _json: { email } },
+    error
+  ) {
+    const User = this;
+    let user;
+    try {
+      user = await User.findOne({ "google.oauthId": oauthId });
+      if (!user) {
+        user = User.create({
+          google: {
+            method: "google",
+            google: {
+              oauthId,
+              name,
+              email,
+            },
+          },
+        });
+      }
+      return user;
+    } catch (err) {
+      error(err);
+    }
+  };
 };
+
 module.exports = methods;

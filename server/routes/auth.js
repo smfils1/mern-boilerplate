@@ -12,10 +12,12 @@ const config = require("../config");
 
 router.post("/login", async (req, res) => {
   const loginInfo = req.body;
+  const localLogin = { local: loginInfo };
+
   try {
     //Validate credentials
     const user = await User.validate({
-      ...loginInfo,
+      ...localLogin,
       error: {
         name: "CredentialsError",
         message: "Invalid Login",
@@ -39,8 +41,8 @@ router.post("/login", async (req, res) => {
       })
       .status(200)
       .json({
-        name: user.name,
-        email: user.email,
+        name: user.local.name,
+        email: user.local.email,
       });
   } catch (err) {
     errorResponse(err, res);
@@ -53,8 +55,11 @@ router.get("/logout", (req, res) => {
 
 router.post("/register", async (req, res) => {
   const userInfo = req.body;
+  const localUser = { local: userInfo };
+
   try {
-    await User.create(userInfo);
+    await User.create(localUser);
+
     res.status(200).json({ message: "success" });
   } catch (err) {
     errorResponse(err, res);
@@ -66,7 +71,7 @@ router.post("/forgot", async (req, res) => {
 
   try {
     //Check if user exists
-    const user = await User.findOne({ email: loginInfo.email });
+    const user = await User.findOne({ "local.email": loginInfo.email });
     if (!user)
       throw {
         name: "InvalidUserError",
