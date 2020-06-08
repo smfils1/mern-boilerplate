@@ -24,7 +24,7 @@ This is a MERN boilerplate project that implements a realtime counter applicatio
 - [x] Authenticated Routes
 - [x] Realtime counter updates
 - [x] History paginated logs
-- [ ] Google OAuth
+- [x] Google OAuth
 
 ## Running Locally
 
